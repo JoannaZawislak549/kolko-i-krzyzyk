@@ -21,90 +21,34 @@ public class Gra {
         System.out.println("Jeśli chcesz wybrać dane pole po prostu wpisz jego numer");
     }
 
-    public static int askFirstPlayer(ArrayList<ArrayList<String>> board){
-        System.out.println("Gracz 1: Gdzie chcesz postawić X?");
-        showBoard(board);
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        return choice;
-    }
+    public static int askPlayer(String symbol, ArrayList<ArrayList<String>> board){
+        while(true) {
+            System.out.println("Gracz" + symbol + ": Gdzie chcesz postawić " + symbol + "?");
+            showBoard(board);
+            int choice = scanner.nextInt();
+            scanner.nextLine();
+            if (choice < 1 || choice > 9) {
+                System.out.println("Wybór niepoprawny. Spróbuj ponownie. Podaj liczbę z zakresu (1-9)");
+                showBoardNumeration();
+                continue;
+            }
+            int row = (choice - 1) / 3;
+            int col = (choice - 1) % 3;
 
-    public static int askSecondPlayer(ArrayList<ArrayList<String>> board){
-        System.out.println("Gracz 2: Gdzie chcesz postawić O?");
-        showBoard(board);
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        return choice;
-    }
-
-    public static void addXToBoard(int choice, ArrayList<ArrayList<String>> board){
-        switch (choice){
-            case 1:
-                board.get(0).set(0, "X");
-                break;
-            case 2:
-                board.get(0).set(1, "X");
-                break;
-            case 3:
-                board.get(0).set(2, "X");
-                break;
-            case 4:
-                board.get(1).set(0, "X");
-                break;
-            case 5:
-                board.get(1).set(1, "X");
-                break;
-            case 6:
-                board.get(1).set(2, "X");
-                break;
-            case 7:
-                board.get(2).set(0, "X");
-                break;
-            case 8:
-                board.get(2).set(1, "X");
-                break;
-            case 9:
-                board.get(2).set(2, "X");
-                break;
+            if (!board.get(row).get(col).equals(" ")) {
+                System.out.println("Pole zajęte. Wybierz inne.");
+                showBoardNumeration();
+            } else {
+                return choice;
+            }
         }
-
-
     }
 
-    public static void addOToBoard(int choice, ArrayList<ArrayList<String>> board){
-        switch (choice){
-            case 1:
-                board.get(0).set(0, "O");
-                break;
-            case 2:
-                board.get(0).set(1, "O");
-                break;
-            case 3:
-                board.get(0).set(2, "O");
-                break;
-            case 4:
-                board.get(1).set(0, "O");
-                break;
-            case 5:
-                board.get(1).set(1, "O");
-                break;
-            case 6:
-                board.get(1).set(2, "O");
-                break;
-            case 7:
-                board.get(2).set(0, "O");
-                break;
-            case 8:
-                board.get(2).set(1, "O");
-                break;
-            case 9:
-                board.get(2).set(2, "O");
-                break;
-        }
-
-
+    public static void addToBoard(String symbol, int choice, ArrayList<ArrayList<String>> board){
+        int row = (choice - 1)/3;
+        int col = (choice - 1)%3;
+        board.get(row).set(col, symbol);
     }
-
 
     public static void showBoard(ArrayList<ArrayList<String>> board){
         String line = "-----------";
@@ -122,41 +66,24 @@ public class Gra {
     }
 
     public static boolean whoWon(ArrayList<ArrayList<String>> board){
-        boolean result = false;
-        if (board.get(0).get(0).equals(board.get(0).get(1)) &&
-                board.get(0).get(1).equals(board.get(0).get(2))
-                && !board.get(0).get(0).equals(" ")){
-            result = true;
-        } else if (board.get(1).get(0).equals(board.get(1).get(1)) &&
-                board.get(1).get(1).equals(board.get(1).get(2))
-                && !board.get(1).get(0).equals(" ")) {
-            result = true;
-        } else if (board.get(2).get(0).equals(board.get(2).get(1)) &&
-                board.get(2).get(1).equals(board.get(2).get(2))
-                && !board.get(2).get(0).equals(" ")) {
-            result = true;
-        } else if (board.get(0).get(0).equals(board.get(1).get(0)) &&
-                board.get(1).get(0).equals(board.get(2).get(0))
-                && !board.get(0).get(0).equals(" ")) {
-            result = true;
-        } else if (board.get(0).get(1).equals(board.get(1).get(1)) &&
-                board.get(1).get(1).equals(board.get(2).get(1))
-                && !board.get(0).get(1).equals(" ")) {
-            result = true;
-        } else if (board.get(0).get(2).equals(board.get(1).get(2)) &&
-                board.get(1).get(2).equals(board.get(2).get(2))
-                && !board.get(0).get(2).equals(" ")) {
-            result = true;
-        } else if (board.get(0).get(0).equals(board.get(1).get(1)) &&
+        for (int i = 0; i < 3; i++) {
+            if (board.get(i).get(0).equals(board.get(i).get(1)) &&
+                    board.get(i).get(1).equals(board.get(i).get(2))
+                    && !board.get(i).get(0).equals(" ")) {
+                return true;
+            } else if (board.get(0).get(i).equals(board.get(1).get(i)) &&
+                    board.get(1).get(i).equals(board.get(2).get(i))
+                    && !board.get(0).get(i).equals(" ")) {
+                return true;
+            }
+        }
+        if (board.get(0).get(0).equals(board.get(1).get(1)) &&
                 board.get(1).get(1).equals(board.get(2).get(2))
                 && !board.get(0).get(0).equals(" ")) {
-            result = true;
-        } else if (board.get(2).get(0).equals(board.get(1).get(1)) &&
+            return true;
+        } else return board.get(2).get(0).equals(board.get(1).get(1)) &&
                 board.get(1).get(1).equals(board.get(0).get(2))
-                && !board.get(2).get(0).equals(" ")) {
-            result = true;
-        }
-        return result;
+                && !board.get(2).get(0).equals(" ");
     }
 
     public static void main(String[] args) {
@@ -164,30 +91,21 @@ public class Gra {
         for (int i = 0; i < 3; i++) {
             board.add(new ArrayList<>(Arrays.asList(" ", " ", " ")));
         }
+        String currentPlayer = "X";
+        showBoardNumeration();
+        for(int i = 0; i < 9; i++){
+            addToBoard(currentPlayer, askPlayer(currentPlayer,board), board);
 
-        for(int i = 0; i < 9;){
-            showBoardNumeration();
-            addXToBoard(askFirstPlayer(board), board);
-            i++;
             if (whoWon(board)){
-                System.out.println("Wygrywa Gracz 1");
+                System.out.println("Wygrywa Gracz " + currentPlayer);
                 break;
             }
-            if (i == 9){
-                System.out.println("Remis!");
-                break;
-            }
-            addOToBoard(askSecondPlayer(board), board);
-            i++;
-            if (whoWon(board)){
-                System.out.println("Wygrywa Gracz 2");
-                break;
-            }
-            if (i == 9){
+            if (i == 8) {
                 System.out.println("Remis!");
                 break;
             }
 
+            currentPlayer = currentPlayer.equals("X") ? "O" : "X";
         }
         showBoard(board);
     }
